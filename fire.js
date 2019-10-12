@@ -38,7 +38,7 @@ function setFire() {
     }, {"r": 239, "g": 239, "b": 199}, {"r": 255, "g": 255, "b": 255}];
     const fireElement = document.getElementById('fire');
     const fireWidth = 80;
-    const fireHeight = 80;
+    const fireHeight = 40;
     let matrix = [];
 
     let fireIntensity = 36;
@@ -46,16 +46,14 @@ function setFire() {
 
     function decreaseIntensity() {
         if (fireIntensity > 0) {
-            fireIntensity--;
-            setBase(matrix, fireIntensity);
+            fireIntensity = fireIntensity - 6;
             document.getElementById('intensity').innerText = fireIntensity.toString();
         }
     }
 
     function increaseIntensity() {
         if (fireIntensity < 36) {
-            fireIntensity++;
-            setBase(matrix, fireIntensity);
+            fireIntensity = fireIntensity + 6;
             document.getElementById('intensity').innerText = fireIntensity.toString();
         }
     }
@@ -81,23 +79,27 @@ function setFire() {
     function getHtml(fireMatrix) {
         return fireMatrix
             .map(row => `<div class="row">${
-                row.map(col => `${col}`)
+                row.map(col => {
+                    color = fireColorsPalette[col];
+                    const colorString = `${color.r},${color.g},${color.b}`;
+                return `<div class="cel" style="background-color: rgb(${colorString})"></div>`;
+            })
                     .reduce((acc, cur) => acc + cur, '')
             }</div>`)
             .reduce((acc, cur) => acc + cur, '');
     }
 
+    matrix = createMatrix();
+    setBase(matrix, fireIntensity);
 
     setInterval(() => {
-        matrix = createMatrix();
         doAnimation(matrix);
     }, 100);
 
 
     function doAnimation(matrix) {
-        setBase(matrix, fireIntensity);
         startPropagation(matrix);
-        renderFire(matrix);
+        setColors(matrix);
         fireElement.innerHTML = getHtml(matrix);
     }
 
@@ -107,22 +109,27 @@ function setFire() {
     }
 
     function startPropagation(fireMatrix) {
-        for (let f = fireWidth; f--; f >= 0) {
-            for (let i = fireHeight; i--; i >= 0) {
+        for (let f = 0; f < fireWidth; f++) {
+            for (let i = 0; i < fireHeight; i++) {
                 const heightDecay = Math.floor(Math.random() * 3);
-                const widthDecay = Math.floor(Math.random() * 1.5);
-                fireMatrix[i][f] = fireMatrix[i + 1 < fireHeight ? i + 1 : i][f + widthDecay < fireWidth ? f + widthDecay : f] - heightDecay;
+                const widthDecay = Math.floor(Math.random() * 2);
+                if(i == fireHeight - 1) {
+                    fireMatrix[i][f] = fireIntensity;
+                } else {
+                    fireMatrix[i][f] = fireMatrix
+                        [i + 1]
+                        [f + widthDecay < fireWidth ? f + widthDecay : f] - heightDecay;
+                }
             }
         }
     }
 
-    function renderFire(fireMatrix) {
+    function setColors(fireMatrix) {
         fireMatrix.forEach((row, indexR) => {
             row.forEach((cel, indexC) => {
                 const decay = Math.floor(Math.random() * 3);
-                const color = fireColorsPalette[cel - decay || 0] || fireColorsPalette[0];
-                const colorString = `${color.r},${color.g},${color.b}`;
-                fireMatrix[indexR][indexC] = `<div class="cel" style="background-color: rgb(${colorString})"></div>`;
+                const color = cel - decay > 0 ? cel - decay : 0;
+                fireMatrix[indexR][indexC] = color;
             })
         });
 
