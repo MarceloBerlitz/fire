@@ -41,26 +41,53 @@ function setFire() {
     const fireHeight = 40;
     let matrix = [];
 
-    let fireIntensity = 36;
+    let fireIntensity = 0;
     document.getElementById('intensity').innerText = fireIntensity.toString();
 
     function decreaseIntensity() {
         if (fireIntensity > 0) {
             fireIntensity = fireIntensity - 6;
-            document.getElementById('intensity').innerText = fireIntensity.toString();
+            updateIntesityHtml()
         }
     }
 
     function increaseIntensity() {
         if (fireIntensity < 36) {
             fireIntensity = fireIntensity + 6;
-            document.getElementById('intensity').innerText = fireIntensity.toString();
+            updateIntesityHtml()
         }
+    }
+
+    function turnOff() {
+        const inter = setInterval(() => {
+            if(fireIntensity > 0) {
+                decreaseIntensity()
+            } else {
+                clearInterval(inter);
+            }
+        }, 100)
+        updateIntesityHtml()
+    }
+
+    function setMax() {
+        const inter = setInterval(() => {
+            if(fireIntensity < 36) {
+                increaseIntensity()
+            } else {
+                clearInterval(inter);
+            }
+        }, 100)
+        updateIntesityHtml()
+    }
+
+    function updateIntesityHtml() {
+        document.getElementById('intensity').innerText = fireIntensity.toString();
     }
 
     document.getElementById('decrease').addEventListener('click', decreaseIntensity);
     document.getElementById('increase').addEventListener('click', increaseIntensity);
-
+    document.getElementById('turnOff').addEventListener('click', turnOff);
+    document.getElementById('setMax').addEventListener('click', setMax);
 
     function createMatrix() {
         let fireMatrix = [];
@@ -96,6 +123,7 @@ function setFire() {
         doAnimation(matrix);
     }, 100);
 
+    setMax();
 
     function doAnimation(matrix) {
         startPropagation(matrix);
