@@ -95,7 +95,7 @@ function setFire() {
 
     setInterval(() => {
         doAnimation(matrix);
-    }, 100);
+    }, 50);
 
     setMax();
 
