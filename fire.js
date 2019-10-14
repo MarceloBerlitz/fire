@@ -11,8 +11,8 @@ function setFire() {
     { "r": 239, "g": 239, "b": 199 }, { "r": 255, "g": 255, "b": 255 }];
 
     const fireElement = document.getElementById('fire');
-    const fireWidth = 80;
-    const fireHeight = 40;
+    const fireWidth = 100;
+    const fireHeight = 60;
     let matrix = [];
 
     let fireIntensity = 0;
@@ -114,13 +114,17 @@ function setFire() {
         for (let f = 0; f < fireWidth; f++) {
             for (let i = 0; i < fireHeight; i++) {
                 const heightDecay = Math.floor(Math.random() * 3);
+                const heightSpread = Math.floor(Math.random() * 3);
                 const widthDecay = Math.floor(Math.random() * 2);
                 if (i == fireHeight - 1) {
                     fireMatrix[i][f] = fireIntensity;
                 } else {
                     fireMatrix[i][f] = fireMatrix
-                    [i + 1]
-                    [f + widthDecay < fireWidth ? f + widthDecay : f] - heightDecay;
+                    [i + heightSpread] ?
+                    fireMatrix
+                        [i + heightSpread]
+                        [f + widthDecay < fireWidth ? f + widthDecay : f]
+                            : fireMatrix[i + 1][f + widthDecay < fireWidth ? f + widthDecay : f] - heightDecay;
                 }
             }
         }
