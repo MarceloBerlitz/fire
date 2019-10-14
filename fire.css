@@ -1,0 +1,12 @@
+.row {
+    display: flex;
+    flex-direction: row;
+}
+.cel {
+    width: 5px;
+    height: 5px;
+    font-size: 10px;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid black;
+}
